@@ -13,11 +13,15 @@ Supports continuous dictation, live transcription, and clipboard export.
 ### Features
 
 🎙 Real-time speech recognition
+
 ✍️ Live interim + final transcription
+
 📋 Copy to clipboard
+
 🎨 Visual listening feedback
+
 ⚠ Error handling
 
 ### Link
 
-- Live Site URL: []()
+- Live Site URL: [ https://voitsekhovska.github.io/voice-to-text-app]( https://voitsekhovska.github.io/voice-to-text-app/)
