@@ -9,12 +9,16 @@ const SpeechRecognition =
   window.SpeechRecognition || window.webkitSpeechRecognition;
 const recognition = new SpeechRecognition();
 
-recognition.continuous = true;
+const isMobile = /Android|iPhone|iPad/i.test(navigator.userAgent);
+
+recognition.continuous = !isMobile;
 recognition.lang = "uk-UA";
 recognition.interimResults = true;
 
 let finalTranscript = "";
 let isListening = false;
+let shouldListen = false;
+let lastFinalChunk = "";
 
 // events
 recognition.onstart = () => {
@@ -29,16 +33,24 @@ recognition.onend = () => {
   mic.classList.remove("listening");
   button.style.backgroundColor = "#8e9fe6";
   button.textContent = "Ок, продовжуй балакати";
+
+  // for mobile devices
+  if (shouldListen && isMobile) {
+    recognition.start();
+  }
 };
 
 recognition.onresult = (event) => {
   let interimTranscript = "";
 
   for (let i = event.resultIndex; i < event.results.length; i++) {
-    const script = event.results[i][0].transcript;
+    const script = event.results[i][0].transcript.trim();
 
     if (event.results[i].isFinal) {
-      finalTranscript += script + " ";
+      if (script !== lastFinalChunk) {
+        finalTranscript += script + " ";
+        lastFinalChunk = script;
+      }
     } else {
       interimTranscript += script;
     }
@@ -76,9 +88,11 @@ const copyMessage = async () => {
 
 // listeners
 button.addEventListener("click", () => {
-  if (isListening) {
+  if (shouldListen) {
+    shouldListen = false;
     recognition.stop();
   } else {
+    shouldListen = true;
     recognition.start();
   }
 });
@@ -87,5 +101,6 @@ copyBtn.addEventListener("click", copyMessage);
 
 clearBtn.addEventListener("click", () => {
   finalTranscript = "";
+  lastFinalChunk = "";
   output.textContent = "";
 });
