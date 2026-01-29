@@ -3,6 +3,8 @@
 A responsive browser-based speech recognition app built with the Web Speech API.
 Supports continuous dictation, live transcription, and clipboard export.
 
+The onresult handler separates interim and final speech results, deduplicates mobile repeats, infers sentence boundaries from pause timing, and applies minimal formatting before rendering a live transcript.
+
 ### Tech stack
 
 - HTML5

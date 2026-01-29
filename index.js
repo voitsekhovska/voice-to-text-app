@@ -15,10 +15,15 @@ recognition.continuous = !isMobile;
 recognition.lang = "uk-UA";
 recognition.interimResults = true;
 
+// flags
 let finalTranscript = "";
 let isListening = false;
 let shouldListen = false;
+let userStopped = true;
 let lastFinalChunk = "";
+let shouldCapitalizeNext = true;
+let finalTime = 0;
+const PAUSE = 1000;
 
 // events
 recognition.onstart = () => {
@@ -30,9 +35,13 @@ recognition.onstart = () => {
 
 recognition.onend = () => {
   isListening = false;
-  mic.classList.remove("listening");
-  button.style.backgroundColor = "#8e9fe6";
-  button.textContent = "Ок, продовжуй балакати";
+
+  if (userStopped) {
+    mic.classList.remove("listening");
+    button.style.backgroundColor = "#8e9fe6";
+    button.textContent = "Ок, продовжуй балакати";
+    return;
+  }
 
   // for mobile devices
   if (shouldListen && isMobile) {
@@ -43,13 +52,21 @@ recognition.onend = () => {
 recognition.onresult = (event) => {
   let interimTranscript = "";
 
-  for (let i = event.resultIndex; i < event.results.length; i++) {
-    const script = event.results[i][0].transcript.trim();
+  const now = Date.now();
 
-    if (event.results[i].isFinal) {
+  for (let i = event.resultIndex; i < event.results.length; i++) {
+    const result = event.results[i];
+    const script = result[0].transcript.trim();
+
+    if (result.isFinal) {
+      if (now - finalTime > PAUSE && finalTranscript) {
+        finalTranscript = finalTranscript.trim() + ". ";
+        shouldCapitalizeNext = true;
+      }
       if (script !== lastFinalChunk) {
-        finalTranscript += script + " ";
+        finalTranscript += formatSentence(script) + " ";
         lastFinalChunk = script;
+        finalTime = now;
       }
     } else {
       interimTranscript += script;
@@ -63,6 +80,7 @@ recognition.onerror = (event) => {
   output.textContent = "Error: " + event.error;
 };
 
+//additional functions
 const copyMessage = async () => {
   try {
     if (output.textContent) {
@@ -86,13 +104,28 @@ const copyMessage = async () => {
   }
 };
 
+const formatSentence = (text) => {
+  let formatted = text.trim();
+
+  if (!formatted) return "";
+
+  if (shouldCapitalizeNext) {
+    formatted = formatted[0].toUpperCase() + formatted.slice(1);
+    shouldCapitalizeNext = false;
+  }
+  return formatted;
+};
+
 // listeners
 button.addEventListener("click", () => {
   if (shouldListen) {
     shouldListen = false;
+    userStopped = true;
     recognition.stop();
+    shouldCapitalizeNext = true;
   } else {
     shouldListen = true;
+    userStopped = false;
     recognition.start();
   }
 });
@@ -103,4 +136,6 @@ clearBtn.addEventListener("click", () => {
   finalTranscript = "";
   lastFinalChunk = "";
   output.textContent = "";
+  finalTime = 0;
+  shouldCapitalizeNext = true;
 });
