@@ -3,8 +3,6 @@
 A responsive, browser-based speech-to-text application built with the Web Speech API and Web Audio API.
 Supports continuous dictation, real-time transcription, and clipboard export, with visual feedback driven by live microphone input.
 
-The app processes interim and final speech results separately, deduplicates repeated mobile recognition events, infers sentence boundaries from detected silence, and applies lightweight formatting before rendering a live transcript.
-
 ### Screenshot
 
 ![](./Screenshot.png)
