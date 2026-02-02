@@ -38,12 +38,17 @@ let dataArray;
 recognition.onstart = () => {
   button.style.backgroundColor = "#6c7df0";
   button.textContent = "Ти багато говориш, перестань";
-  startAudioLevel();
+
+  if (!isMobile) {
+    startAudioLevel();
+  }
 };
 
 recognition.onend = () => {
   if (userStopped) {
-    stopAudioLevel();
+    if (!isMobile) {
+      stopAudioLevel();
+    }
     button.style.backgroundColor = "#8e9fe6";
     button.textContent = "Ок, продовжуй балакати";
     return;
