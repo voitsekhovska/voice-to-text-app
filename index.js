@@ -41,6 +41,8 @@ recognition.onstart = () => {
 
   if (!isMobile) {
     startAudioLevel();
+  } else {
+    mic.classList.add("listening");
   }
 };
 
@@ -49,6 +51,7 @@ recognition.onend = () => {
     if (!isMobile) {
       stopAudioLevel();
     }
+    resetMicUI();
     button.style.backgroundColor = "#8e9fe6";
     button.textContent = "Ок, продовжуй балакати";
     return;
@@ -141,6 +144,11 @@ const updateMicUI = (volume) => {
   smoothVolume += (volume - smoothVolume) * 0.2;
 
   mic.style.transform = `scale(${1 + smoothVolume * 2})`;
+};
+
+const resetMicUI = () => {
+  mic.style.transform = "";
+  mic.classList.remove("listening");
 };
 
 const stopAudioLevel = () => {
