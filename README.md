@@ -1,7 +1,8 @@
 ### Voice-to-Text Web App
 
-A responsive, browser-based speech-to-text application built with the Web Speech API and Web Audio API.
-Supports continuous dictation, real-time transcription, and clipboard export, with visual feedback driven by live microphone input.
+A responsive speech-to-text web app built with the Web Speech API.
+Supports continuous dictation, real-time transcription, and clipboard export. 
+Desktop browsers use the Web Audio API for live microphone-level feedback, while mobile devices fall back to a CSS-based visual indicator.
 
 ### Screenshot
 
